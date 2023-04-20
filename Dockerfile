@@ -1,19 +1,11 @@
-FROM node:16
+FROM alpine:3.13
 
-ENV NODE_ENV production
+ARG KUBECTL_VERSION="1.21.2"
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN apk add py-pip curl
+RUN pip install awscli
+RUN curl -L -o /usr/bin/kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+RUN chmod +x /usr/bin/kubectl
 
-COPY .npmrc /usr/src/app/
-COPY package.json /usr/src/app/
-COPY package-lock.json /usr/src/app/
-
-RUN npm ci
-
-COPY . /usr/src/app
-
-RUN rm -f .npmrc
-
-EXPOSE 3000
-CMD ["npm", "start"]
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
