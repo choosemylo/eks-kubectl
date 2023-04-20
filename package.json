@@ -1,0 +1,73 @@
+{
+  "name": "express-project-skeleton",
+  "version": "2.1.4",
+  "license": "UNLICENSED",
+  "description": "a node.js + express project skeleton",
+  "main": "app/app.js",
+  "scripts": {
+    "secure": "npm audit --production --json | node_modules/.bin/advanced-audit",
+    "secure:win": "npm audit --production --json | .\\node_modules\\.bin\\advanced-audit.cmd",
+    "db:migrate": "knex migrate:latest",
+    "db:create": "node ./scripts/db.js create",
+    "start": "knex migrate:latest && node bin/www",
+    "test": "export NODE_ENV=test && npm run test:lint && nyc node_modules/mocha/bin/_mocha --recursive --exit",
+    "test:win": "set NODE_ENV=test&& npm run test:lint&& nyc node_modules/mocha/bin/_mocha --recursive --exit",
+    "test:lint": "standard \"./app/**/*.js\" \"./test/**/*.js\"",
+    "test:lint:fix": "standard \"./app/**/*.js\" \"./test/**/*.js\" --fix",
+    "test:coverage:win": "set NODE_ENV=test&& nyc node_modules/mocha/bin/_mocha --recursive --exit",
+    "watch": "export NODE_ENV=development && node_modules/.bin/nodemon ./bin/www",
+    "watch:win": "set NODE_ENV=development&& .\\node_modules\\.bin\\nodemon ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-mylo:choosemylo/express-project-skeleton.git"
+  },
+  "author": "",
+  "engines": {
+    "node": ">16.0.0"
+  },
+  "dependencies": {
+    "@godaddy/terminus": "^4.10.2",
+    "@mylo/auth-token-util": "^4.0.1",
+    "@mylo/diagnostic-middleware": "^3.0.1",
+    "@mylo/my-objection-db": "^4.1.4",
+    "@mylo/mylog": "^3.2.1",
+    "@mylo/queue-agent": "^2.0.4",
+    "@mylo/service-common": "^2.1.1",
+    "aws-sdk": "^2.1039.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "knex": "^2.1.0",
+    "on-headers": "^1.0.2",
+    "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "@mylo/build-tools": "^6.0.5",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "chai-http": "^4.3.0",
+    "dirty-chai": "^2.0.1",
+    "mocha": "^9.1.3",
+    "nodemon": "^2.0.15",
+    "nyc": "^15.1.0",
+    "sinon": "^12.0.1",
+    "sinon-chai": "^3.7.0",
+    "standard": "^16.0.4"
+  },
+  "nyc": {
+    "include": [
+      "app/**/*.js"
+    ],
+    "reporter": [
+      "text",
+      "text-summary",
+      "html"
+    ],
+    "check-coverage": true,
+    "branches": 50,
+    "lines": 80,
+    "functions": 80,
+    "statements": 80,
+    "subdir": "."
+  }
+}

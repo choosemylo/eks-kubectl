@@ -1,0 +1,49 @@
+dist: focal
+env:
+  global:
+    - NODE_ENV=test
+    - PGPORT=5433
+    - DATABASE_PORT=5433
+    - DATABASE_USER=postgres
+    - WITH_INTEGRATION=true
+    - PGUSER=postgres
+    # k8s COC Integration
+    # - file_to_change="express-project-skeleton.yaml" # TODO Update for your service
+    # - service_name="express-project-skeleton" # TODO Update for your service
+addons:
+  postgresql: "14"
+  apt:
+    packages:
+      - postgresql-14
+      - postgresql-client-14
+    update: true
+    sources:
+      - sourceline: deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main
+        key_url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+branches:
+  only:
+    - master
+    - "/.*-mylo$/"
+language: node_js
+node_js:
+  - "16"
+services:
+  - docker
+before_install:
+  # next 2 lines are needed to fix issue with Travis postgres authentication
+  - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5\|scram-sha-256/trust/g' /etc/postgresql/*/main/pg_hba.conf
+  - sudo systemctl restart postgresql@14-main
+  - echo -n "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+before_script:
+  - npm run db:create
+  - npm run db:migrate
+  - npx danger ci -d ./node_modules/@mylo/build-tools/dangerfile.js
+  - npm audit --production --json | node_modules/.bin/advanced-audit
+  - npm test
+script:
+  - docker build -t choosemylo/$(node -p "require('./package.json').name") .
+  - ./node_modules/.bin/tag-repo
+after_success:
+  - ./node_modules/.bin/push-to-dockerhub $(node -p "require('./package.json').name") $(node -p "require('./package.json').version")
+  # - ./node_modules/.bin/k8s-deploy # TODO uncomment to enable k8s-deploy for your service
