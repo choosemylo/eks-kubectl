@@ -3,7 +3,7 @@ Interacts with kubernetes clusters calling `kubectl` commands. Integrates suppor
 
 ## Version
 KUBECTL VERSION 
-1.21.2
+1.25.7
 
 ## Usage
 
@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Trigger deploy
-        uses: angela-mylo/EKSKUBECTL@master
+        uses: choosemylo/EKSKUBECTL@main
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
@@ -50,7 +50,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Trigger deploy
-        uses: angela-mylo/EKSKUBECTL@master
+        uses: choosemylo/EKSKUBECTL@main
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
@@ -88,7 +88,7 @@ Make sure your users has the proper IAM permissions to access your cluster and t
 ```yaml
       - name: Save container image
         id: image-save
-        uses: angela-mylo/EKSKUBECTL@master
+        uses: choosemylo/EKSKUBECTL@main
         env:
           KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
         with:
